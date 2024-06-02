@@ -4,16 +4,15 @@ import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.themes.FlatMacLightLaf;
 import javax.swing.UIManager;
 
-/**
- *
- * @author Ichasada
- */
+import java.sql.*;
+
+import utils.DatabaseConnection;
+
 public class Register extends javax.swing.JFrame {
 
 
     public Register() {
         initComponents();
-        
         // PLACEHOLDER FOR EACH FIELDS
         fullnameField.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Fullname");
         fullnameField.putClientProperty(FlatClientProperties.TEXT_FIELD_SHOW_CLEAR_BUTTON, true);
@@ -23,6 +22,26 @@ public class Register extends javax.swing.JFrame {
         username.putClientProperty(FlatClientProperties.TEXT_FIELD_SHOW_CLEAR_BUTTON, true);
         password.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Password");
         password.putClientProperty(FlatClientProperties.STYLE,  "showRevealButton: true");
+    }
+    
+     // REGISTER TO DATABSE
+    private boolean registerUser(String fullName, String wa, String userName, String password) {
+        boolean isRegistered = false;
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            String query = "INSERT INTO users (fullname, whatsapp, username, password) VALUES (?, ?, ?, ?)";
+            PreparedStatement preparedStatement = conn.prepareStatement(query);
+            preparedStatement.setString(1, fullName);
+            preparedStatement.setString(2, wa);
+            preparedStatement.setString(3, userName);
+            preparedStatement.setString(4, password);
+            int rowsAffected = preparedStatement.executeUpdate();
+            if (rowsAffected > 0) {
+                isRegistered = true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return isRegistered;
     }
 
     @SuppressWarnings("unchecked")
@@ -40,6 +59,9 @@ public class Register extends javax.swing.JFrame {
         username = new javax.swing.JFormattedTextField();
         password = new javax.swing.JPasswordField();
         jButton1 = new javax.swing.JButton();
+        toLoginPage = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        status = new javax.swing.JLabel();
 
         javax.swing.GroupLayout jDialog1Layout = new javax.swing.GroupLayout(jDialog1.getContentPane());
         jDialog1.getContentPane().setLayout(jDialog1Layout);
@@ -67,7 +89,6 @@ public class Register extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
-        setPreferredSize(new java.awt.Dimension(854, 480));
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowOpened(java.awt.event.WindowEvent evt) {
                 formWindowOpened(evt);
@@ -114,6 +135,11 @@ public class Register extends javax.swing.JFrame {
         jButton1.setText("REGISTER!");
         jButton1.setBorderPainted(false);
         jButton1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton1MouseClicked(evt);
+            }
+        });
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
@@ -121,15 +147,43 @@ public class Register extends javax.swing.JFrame {
         });
         jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 320, 280, 35));
 
+        toLoginPage.setBackground(new java.awt.Color(204, 204, 204));
+        toLoginPage.setFont(new java.awt.Font("Segoe UI", 0, 10)); // NOI18N
+        toLoginPage.setForeground(new java.awt.Color(204, 204, 204));
+        toLoginPage.setText("Sudah ada akun?");
+        toLoginPage.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        toLoginPage.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                toLoginPageMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                toLoginPageMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                toLoginPageMouseExited(evt);
+            }
+        });
+        jPanel1.add(toLoginPage, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 360, -1, -1));
+
+        jLabel3.setText("jLabel3");
+        jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 380, -1, -1));
+        jPanel1.add(status, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 410, -1, -1));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 854, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 854, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 480, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 480, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         pack();
@@ -155,9 +209,35 @@ public class Register extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void toLoginPageMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_toLoginPageMouseClicked
+        Login login = new Login();
+        login.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_toLoginPageMouseClicked
 
-    public static void main(String args[]) {
+    private void toLoginPageMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_toLoginPageMouseEntered
+        toLoginPage.setForeground(new java.awt.Color(0, 94, 155));
+    }//GEN-LAST:event_toLoginPageMouseEntered
+
+    private void toLoginPageMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_toLoginPageMouseExited
+        toLoginPage.setForeground(new java.awt.Color(204, 204, 204));
+    }//GEN-LAST:event_toLoginPageMouseExited
+
+    private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
+
+//        boolean status = registerUser(fullnameField.getText(), whatsappNumber.getText(),username.getText(), password.getText());
         
+        if (registerUser(fullnameField.getText(), whatsappNumber.getText(),username.getText(), password.getText())) {
+            status.setText("Pendaftaran Berhasil!");
+        } else {
+            status.setText("Sudah terdaftar / ada yang salah saat mengisi form!");
+        }
+    }//GEN-LAST:event_jButton1MouseClicked
+              
+    
+    
+    
+    public static void main(String args[]) {
         // Set Nimbus Theme
         try {
             UIManager.setLookAndFeel(new FlatMacLightLaf());
@@ -182,9 +262,12 @@ public class Register extends javax.swing.JFrame {
     private javax.swing.JDialog jDialog2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPasswordField password;
+    private javax.swing.JLabel status;
+    private javax.swing.JLabel toLoginPage;
     private javax.swing.JFormattedTextField username;
     private javax.swing.JFormattedTextField whatsappNumber;
     // End of variables declaration//GEN-END:variables
