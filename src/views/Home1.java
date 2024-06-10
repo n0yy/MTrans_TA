@@ -3,6 +3,7 @@ package views;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.PrintWriter;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import com.toedter.calendar.JDateChooser;
@@ -11,70 +12,18 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Logger;
+import java.util.logging.Level;
+import java.time.ZoneId;
 
 public class Home1 extends javax.swing.JFrame {
     public Home1() {
         initComponents();
     }
-    private void iniComponents() {
-        jComboBoxKeberangkatan = new JComboBox<>();
-        jComboBoxTujuan = new JComboBox<>();
-        jDateChooser = new JDateChooser();
-        jButtonCari = new JButton("Cari Jadwal");
 
-        jComboBoxKeberangkatan.addItem("Jakarta");
-        jComboBoxKeberangkatan.addItem("Bekasi");
-        jComboBoxKeberangkatan.addItem("Bogor");
-        jComboBoxKeberangkatan.addItem("Tangerang");
-
-        jComboBoxTujuan.addItem("Malang");
-
-        jButtonCari.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String keberangkatan = (String) jComboBoxKeberangkatan.getSelectedItem();
-                String tujuan = (String) jComboBoxTujuan.getSelectedItem();
-                LocalDate tanggal = LocalDate.parse(((JTextField) jDateChooser.getDateEditor().getUiComponent()).getText(), DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-
-                boolean checkScheduleAvailability = checkScheduleAvailability(keberangkatan, tujuan, tanggal);
-
-                if (checkScheduleAvailability) {
-                    jButtonCari();
-                } else {
-                    JOptionPane.showMessageDialog(null, "Jadwal tidak ditemukan");
-                }
-            }
-        });
-        
-        JPanel panel = new JPanel();
-        panel.add(jComboBoxKeberangkatan);
-        panel.add(jComboBoxTujuan);
-        panel.add(jDateChooser);
-        panel.add(jButtonCari);
-
-        add(panel);
-
-        pack();
-        setVisible(true);
-        
-        private boolean checkScheduleAvailability(String keberangkatan, String tujuan, LocalDate tanggal) {
-            boolean isScheduleAvaible = false;
-            try{
-                Class.forName("jdbc:mysql://localhost:3306/mtrans");
-            }catch (ClassNotFoundException e) {
-                System.out.println("Jadwal Tidak Ditemukan" + e.getMessage());
-            return false;
-            }
-   
-
-        public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new Home1().setVisible(true);
-            }
-        });
-    }
+//     private void checkScheduleAvailability(String keberangkatan, String tujuan, LocalDate tanggal) {
     
+// }
     
 
     @SuppressWarnings("unchecked")
@@ -199,9 +148,30 @@ public class Home1 extends javax.swing.JFrame {
 
     private void jButtonCariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCariActionPerformed
         // TODO add your handling code here:
-        Tiket tiket = new Tiket();
-        tiket.setVisible(true);
-        this.dispose();
+            String keberangkatan = jComboBoxKeberangkatan.getSelectedItem().toString();
+            String tujuan = jComboBoxTujuan.getSelectedItem().toString();
+            LocalDate tanggal = jDateChooser.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        
+            try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/mtrans", "username", "password");
+                 PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM schedules WHERE keberangkatan = ? AND tujuan = ? AND tanggal = ?")) {
+                pstmt.setString(1, keberangkatan);
+                pstmt.setString(2, tujuan);
+                pstmt.setDate(3, java.sql.Date.valueOf(tanggal));
+                try (ResultSet rs = pstmt.executeQuery()) {
+                    if (rs.next()) {
+                        PilihTiket nextPage = new PilihTiket();
+                        nextPage.setVisible(true);
+                        this.setVisible(false); 
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Tiket tidak tersedia");
+                    }
+                }
+            } catch (SQLException e) {
+                Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Error checking schedule availability", e);
+            }
+        // Tiket tiket = new Tiket();
+        // tiket.setVisible(true);
+        // this.dispose();
     }//GEN-LAST:event_jButtonCariActionPerformed
 
     /**
