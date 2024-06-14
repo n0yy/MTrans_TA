@@ -148,31 +148,27 @@ public class Home1 extends javax.swing.JFrame {
 
     private void jButtonCariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCariActionPerformed
         // TODO add your handling code here:
-            String keberangkatan = jComboBoxKeberangkatan.getSelectedItem().toString();
-            String tujuan = jComboBoxTujuan.getSelectedItem().toString();
-            LocalDate tanggal = jDateChooser.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        
-            try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/mtrans", "username", "password");
-                 PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM schedules WHERE keberangkatan = ? AND tujuan = ? AND tanggal = ?")) {
-                pstmt.setString(1, keberangkatan);
-                pstmt.setString(2, tujuan);
-                pstmt.setDate(3, java.sql.Date.valueOf(tanggal));
-                try (ResultSet rs = pstmt.executeQuery()) {
-                    if (rs.next()) {
-                        PilihTiket nextPage = new PilihTiket();
-                        nextPage.setVisible(true);
-                        this.setVisible(false); 
-                    } else {
-                        JOptionPane.showMessageDialog(null, "Tiket tidak tersedia");
-                    }
-                }
-            } catch (SQLException e) {
-                Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Error checking schedule availability", e);
-            }
+        String keberangkatan = jComboBoxKeberangkatan.getSelectedItem().toString();
+        String tujuan = jComboBoxTujuan.getSelectedItem().toString();
+        LocalDate tanggal = jDateChooser.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+    
+        if (keberangkatan.equals("Jakarta") && tujuan.equals("Malang") && !tanggal.isBefore(LocalDate.now())) {
+            RUTEJKT nextPage = new RUTEJKT();
+            nextPage.setVisible(true);
+            this.dispose();
+        } else if (keberangkatan.equals("Malang") && tujuan.equals("Jakarta")) {
+            RUTEMALANG nextPage = new RUTEMALANG();
+            nextPage.setVisible(true);
+            this.dispose();
+        } else {
+            // handle other cases or show error message
+            JOptionPane.showMessageDialog(this, "Rute tidak tersedia atau tanggal tidak valid");
+        }
+    }
         // Tiket tiket = new Tiket();
         // tiket.setVisible(true);
         // this.dispose();
-    }//GEN-LAST:event_jButtonCariActionPerformed
+        //GEN-LAST:event_jButtonCariActionPerformed
 
     /**
      * @param args the command line arguments
