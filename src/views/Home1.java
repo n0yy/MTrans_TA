@@ -12,18 +12,39 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.logging.Logger;
-import java.util.logging.Level;
+import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
 import java.time.ZoneId;
 
 public class Home1 extends javax.swing.JFrame {
+    private Connection conn;
+    private Connection dbConnect() {
+        try {
+            String url = "jdbc:mysql://localhost:3306/mtrans";
+            String user = "root";
+            String password = "";
+            return DriverManager.getConnection(url, user, password);
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Koneksi database gagal: " + e.getMessage());
+            return null;
+        }
+    }
+    private void showError(String message) {
+        JOptionPane.showMessageDialog(this, message);
+    }
     public Home1() {
         initComponents();
+        conn = dbConnect(); 
     }
-
-//     private void checkScheduleAvailability(String keberangkatan, String tujuan, LocalDate tanggal) {
-    
-// }
+    public class Route{
+        public void setVisible(boolean visible){
+            setVisible(visible);
+        }
+    }
+    public Route getRoute(String routeId, LocalDate tanggal) {
+        Route route = new Route();
+        return route;
+    }
     
 
     @SuppressWarnings("unchecked")
@@ -66,6 +87,8 @@ public class Home1 extends javax.swing.JFrame {
 
         jLabel_tanggal.setFont(new java.awt.Font("Sitka Heading", 0, 14)); // NOI18N
         jLabel_tanggal.setText("Tanggal Keberangkatan");
+
+        jDateChooser.setDateFormatString("yyyy-MM-dd");
 
         jComboBoxTujuan.setFont(new java.awt.Font("Calibri", 1, 12)); // NOI18N
         jComboBoxTujuan.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Pilih Kota Tujuan", "MALANG" }));
@@ -146,29 +169,43 @@ public class Home1 extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jComboBoxTujuanActionPerformed
 
-    private void jButtonCariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCariActionPerformed
+    private void jButtonCariActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
         String keberangkatan = jComboBoxKeberangkatan.getSelectedItem().toString();
         String tujuan = jComboBoxTujuan.getSelectedItem().toString();
         LocalDate tanggal = jDateChooser.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        String formattedDate = tanggal.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
     
-        if (keberangkatan.equals("Jakarta") && tujuan.equals("Malang") && !tanggal.isBefore(LocalDate.now())) {
-            RUTEJKT nextPage = new RUTEJKT();
-            nextPage.setVisible(true);
-            this.dispose();
-        } else if (keberangkatan.equals("Malang") && tujuan.equals("Jakarta")) {
-            RUTEMALANG nextPage = new RUTEMALANG();
-            nextPage.setVisible(true);
-            this.dispose();
-        } else {
-            // handle other cases or show error message
-            JOptionPane.showMessageDialog(this, "Rute tidak tersedia atau tanggal tidak valid");
+        try (PreparedStatement stmt = conn.prepareStatement("SELECT * FROM rute_bus WHERE keberangkatan = ? AND tujuan = ? AND tanggal = ?")) {
+            stmt.setString(1, keberangkatan);
+            stmt.setString(2, tujuan);
+            stmt.setString(3, formattedDate);
+        
+            // Execute the query and process the result set
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    String routeId = rs.getString("id_rute");
+                    Route route = getRoute(routeId, tanggal);
+                    if (route != null) {
+                        // Create a new RUTEJKT1 instance and show it
+                        RUTEJKT1 rutejkt = new RUTEJKT1();
+                        rutejkt.setVisible(true);
+                        this.dispose();
+                    } else {
+                        showError("Rute tidak tersedia atau tanggal tidak valid");
+                    }
+                } else {
+                    showError("Tanggal tidak tersedia");
+                }
+            }
+        } catch (SQLException e) {
+            showError("Error executing query: " + e.getMessage());
         }
     }
         // Tiket tiket = new Tiket();
         // tiket.setVisible(true);
         // this.dispose();
-        //GEN-LAST:event_jButtonCariActionPerformed
+                                           
 
     /**
      * @param args the command line arguments
