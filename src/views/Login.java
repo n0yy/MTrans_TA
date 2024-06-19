@@ -55,7 +55,7 @@ public class Login extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         usernameField = new javax.swing.JFormattedTextField();
         passwordField = new javax.swing.JPasswordField();
-        jButton1 = new javax.swing.JButton();
+        toFrameHome = new javax.swing.JButton();
         toRegisterPage = new javax.swing.JLabel();
         status = new javax.swing.JLabel();
 
@@ -81,20 +81,20 @@ public class Login extends javax.swing.JFrame {
             }
         });
 
-        jButton1.setBackground(new java.awt.Color(128, 230, 253));
-        jButton1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jButton1.setForeground(new java.awt.Color(0, 94, 155));
-        jButton1.setText("LOGIN!");
-        jButton1.setBorderPainted(false);
-        jButton1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+        toFrameHome.setBackground(new java.awt.Color(128, 230, 253));
+        toFrameHome.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        toFrameHome.setForeground(new java.awt.Color(0, 94, 155));
+        toFrameHome.setText("LOGIN!");
+        toFrameHome.setBorderPainted(false);
+        toFrameHome.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        toFrameHome.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jButton1MouseClicked(evt);
+                toFrameHomeMouseClicked(evt);
             }
         });
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        toFrameHome.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                toFrameHomeActionPerformed(evt);
             }
         });
 
@@ -132,7 +132,7 @@ public class Login extends javax.swing.JFrame {
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(passwordField, javax.swing.GroupLayout.PREFERRED_SIZE, 280, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(usernameField, javax.swing.GroupLayout.PREFERRED_SIZE, 280, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 280, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                    .addComponent(toFrameHome, javax.swing.GroupLayout.PREFERRED_SIZE, 280, javax.swing.GroupLayout.PREFERRED_SIZE))))
                         .addContainerGap(72, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -159,7 +159,7 @@ public class Login extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(passwordField, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(30, 30, 30)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(toFrameHome, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(toRegisterPage)
                         .addGap(18, 18, 18)
@@ -197,9 +197,12 @@ public class Login extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_usernameFieldActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void toFrameHomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_toFrameHomeActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+        Home1 home = new Home1();
+        home.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_toFrameHomeActionPerformed
 
     private void toRegisterPageMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_toRegisterPageMouseClicked
         Register register = new Register();
@@ -219,14 +222,14 @@ public class Login extends javax.swing.JFrame {
         toRegisterPage.setForeground(new java.awt.Color(204, 204, 204));
     }//GEN-LAST:event_toRegisterPageMouseExited
 
-    private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
+    private void toFrameHomeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_toFrameHomeMouseClicked
         // TODO add your handling code here:
         if (login(usernameField.getText(), passwordField.getText())) {
             status.setText("login berhasil");
         } else {
             status.setText("salah username atau password");
         }
-    }//GEN-LAST:event_jButton1MouseClicked
+    }//GEN-LAST:event_toFrameHomeMouseClicked
 
     /**
      * @param args the command line arguments
@@ -252,13 +255,13 @@ public class Login extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPasswordField passwordField;
     private javax.swing.JLabel status;
+    private javax.swing.JButton toFrameHome;
     private javax.swing.JLabel toRegisterPage;
     private javax.swing.JFormattedTextField usernameField;
     // End of variables declaration//GEN-END:variables
